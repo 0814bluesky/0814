@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>修仙公式計算器｜任性製作</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#1f2937;--muted:#6b7280;--accent:#6366f1;--accent2:#10b981;--line:#e5e7eb;--warn:#f59e0b}
+*{box-sizing:border-box}body{margin:0;font-family:"Microsoft JhengHei",system-ui,-apple-system,Segoe UI,sans-serif;background:linear-gradient(135deg,#eef2ff,#f7fee7 55%,#fff);color:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 44px}.hero{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:20px}.hero h1{margin:0;font-size:34px;letter-spacing:.04em}.hero p{margin:8px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:22px;box-shadow:0 16px 40px rgba(31,41,55,.08);padding:20px}.span4{grid-column:span 4}.span8{grid-column:span 8}.span12{grid-column:span 12}
+h2{font-size:20px;margin:0 0 14px}.hint{font-size:13px;color:var(--muted);line-height:1.6;margin-top:-6px;margin-bottom:14px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{margin-bottom:12px}label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}input,select{width:100%;border:1px solid #d1d5db;background:#fff;border-radius:14px;padding:12px 12px;font-size:16px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(99,102,241,.12)}
+.result{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.pill{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:14px}.pill b{display:block;font-size:22px;margin-top:4px}.pill small{color:var(--muted)}
+.big{font-size:30px!important;color:var(--accent)}.good{color:var(--accent2)}.formula{font-size:12px;color:var(--muted);background:#f9fafb;border:1px dashed #d1d5db;border-radius:12px;padding:10px;margin-top:10px;line-height:1.5}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;overflow:hidden;border-radius:16px;border:1px solid var(--line)}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:right}th{background:#eef2ff;color:#374151;font-weight:700}td:first-child,th:first-child{text-align:center}tr:last-child td{border-bottom:0}tbody tr:hover{background:#fafafa}.badge{display:inline-flex;padding:4px 9px;border-radius:999px;background:#ecfdf5;color:#047857;font-size:12px;font-weight:700}.footer{margin-top:18px;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:900px){.span4,.span8{grid-column:span 12}.hero{display:block}.row,.result{grid-template-columns:1fr}.hero h1{font-size:28px}}
+</style>
+
+<style>
+.encounter-card{
+  margin:28px auto;
+  padding:22px 18px;
+  max-width:1100px;
+  background:linear-gradient(180deg,#fffaf0,#fff7e8);
+  border:1px solid #e5c89c;
+  border-radius:18px;
+  box-shadow:0 8px 24px rgba(120,82,28,.10);
+}
+.encounter-card h2{
+  margin:0 0 18px;
+  text-align:center;
+  font-size:32px;
+  letter-spacing:.12em;
+  color:#b91c1c;
+  font-weight:900;
+}
+.encounter-table-wrap{overflow-x:auto;}
+.encounter-table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fffdf7;
+  border-radius:12px;
+  overflow:hidden;
+}
+.encounter-table td{
+  border:1px solid #e7d2ad;
+  padding:10px 12px;
+  text-align:center;
+  font-size:20px;
+  font-weight:800;
+  line-height:1.25;
+}
+.encounter-table tr:nth-child(odd) td{background:#fff8e8;}
+.encounter-table tr:nth-child(even) td{background:#ffffff;}
+.encounter-table .bad{color:#dc2626;}
+.encounter-table .pill{color:#2e7d32;}
+.encounter-table .challenge{color:#1d4ed8;}
+.encounter-table .gain{color:#9333ea;}
+.encounter-table .energy{color:#d97706;}
+.encounter-table .none{color:#0f766e;}
+.encounter-note{
+  margin:14px 4px 0;
+  color:#7c5c2f;
+  font-size:15px;
+  line-height:1.7;
+}
+@media(max-width:700px){
+  .encounter-card{padding:16px 10px;margin:18px 8px;}
+  .encounter-card h2{font-size:26px;}
+  .encounter-table td{font-size:16px;padding:8px 6px;}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div><h1>修仙公式計算器｜任性製作</h1><p></p></div>
+    <span class="badge">網頁版</span>
+  </div>
+
+  <div class="grid">
+    <section class="card span4">
+      <h2>戰力計算</h2>
+      <p class="hint">對應 Excel：我的戰力、潤下之水法、能打贏戰力、能打贏我的戰力。</p>
+      <div class="field"><label>我的戰力</label><input id="power" type="number" value="1651610" min="0"></div>
+      <div class="result">
+        <div class="pill"><small>潤下之水法（+5%）</small><b id="water">0</b></div>
+        <div class="pill"><small>你能打贏的戰力</small><b id="canBeat" class="good">0</b></div>
+        <div class="pill"><small>能打贏你的戰力</small><b id="beatMe">0</b></div>
+        <div class="pill"><small>潤下之水法（+5%）能打贏之戰力</small><b id="gap">0</b></div>
+      </div>
+      <div class="formula">公式：潤下之水法 = 戰力 × 1.05；你能打贏 = 戰力 × 1.05 ÷ 0.95；能打贏你 = 戰力 × 0.95 ÷ 1.05</div>
+    </section>
+
+    <section class="card span4">
+      <h2>結晶時間</h2>
+      <p class="hint">對應 Excel：結晶滿總量 ÷ 修練速度 ÷ 60。</p>
+      <div class="field"><label>結晶滿總量</label><input id="crystalTotal" type="number" value="21966" min="0"></div>
+      <div class="field"><label>修練速度</label><input id="crystalSpeed" type="number" value="9" min="0" step="0.1"></div>
+      <div class="result">
+        <div class="pill"><small>多久滿</small><b id="crystalMin" class="big">0</b><small>分鐘</small></div>
+        <div class="pill"><small>換算</small><b id="crystalHour">0</b><small>小時</small></div>
+      </div>
+      <div class="formula">公式：分鐘 = 滿總量 ÷ 修練速度 ÷ 60</div>
+    </section>
+
+    <section class="card span4">
+      <h2>修為時間估算</h2>
+      <p class="hint">依 Excel 的「前期／中期／後期」修為表，輸入目前修為與修練速度，估算還需時間。</p>
+      <div class="row">
+        <div class="field"><label>等級</label><select id="level"></select></div>
+        <div class="field"><label>階段</label><select id="stage"><option value="early">前期</option><option value="middle">中期</option><option value="late">後期</option></select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>目前修為</label><input id="currentCult" type="number" value="42797" min="0"></div>
+        <div class="field"><label>可補之修為</label><input id="bonusCult" type="number" value="200000" min="0"></div>
+      </div>
+      <div class="field"><label>當前修練速度</label><input id="cultSpeed" type="number" value="55.7" min="0" step="0.1"></div>
+      <div class="result">
+        <div class="pill"><small>當期需要修為</small><b id="stageNeed">0</b></div>
+        <div class="pill"><small>還缺修為</small><b id="remainCult" class="good">0</b></div>
+        <div class="pill"><small>還需時間</small><b id="remainHours" class="big">0</b><small>小時</small></div>
+        <div class="pill"><small>約等於</small><b id="remainDays">0</b><small>天</small></div>
+      </div>
+      <div class="formula">公式：還缺 = 當期需要修為 − 目前修為 − 可補之修為；小時 = 還缺 ÷ 3600 ÷ 修練速度</div>
+    </section>
+
+    <section class="card span12">
+      <h2>修為資料表</h2>
+      <p class="hint">這是從 Excel C16:H33 擷取的等級、前中後期、總共、打帖修為資料。</p>
+      <div style="overflow:auto"><table id="dataTable"><thead><tr><th>等級</th><th>前期</th><th>中期</th><th>後期</th><th>總共</th><th>打帖修為</th></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+  <div class="footer">公式來源：修仙123321(1).xlsx；此網頁可離線開啟使用。</div>
+</div>
+<script>
+const DATA = [{"level":1,"early":15,"middle":25,"late":50,"total":90,"post":20},{"level":2,"early":100,"middle":400,"late":900,"total":1400,"post":100},{"level":3,"early":5400,"middle":13000,"late":24150,"total":42550,"post":800},{"level":4,"early":25000,"middle":26770,"late":44625,"total":96395,"post":1000},{"level":5,"early":48825,"middle":51240,"late":54915,"total":154980,"post":1500},{"level":6,"early":56490,"middle":59325,"late":61950,"total":177765,"post":2000},{"level":7,"early":65415,"middle":68670,"late":72135,"total":206220,"post":3000},{"level":8,"early":75705,"middle":79485,"late":166950,"total":322140,"post":4000},{"level":9,"early":175350,"middle":183750,"late":193200,"total":552300,"post":5000},{"level":10,"early":202965,"middle":213150,"late":223650,"total":639765,"post":6000},{"level":11,"early":262500,"middle":283500,"late":315000,"total":861000,"post":8000},{"level":12,"early":1050000,"middle":861000,"late":903000,"total":2814000,"post":20000},{"level":13,"early":924000,"middle":945000,"late":950985,"total":2819985,"post":25000},{"level":14,"early":968100,"middle":985530,"late":1003275,"total":2956905,"post":28000},{"level":15,"early":1020000,"middle":1039500,"late":1058442,"total":3117942,"post":30000},{"level":16,"early":2520000,"middle":1890000,"late":1942500,"total":6352500,"post":45000},{"level":17,"early":2047500,"middle":2252250,"late":2478000,"total":6777750,"post":60000},{"level":18,"early":6300000,"middle":7035000,"late":7035000,"total":20370000,"post":100000}];
+
+const $ = id => document.getElementById(id);
+const n = id => Number($(id).value) || 0;
+
+// 最多顯示小數點後三位，尾數 0 不顯示
+function trim3(x) {
+  const num = Number(x);
+  if (!Number.isFinite(num)) return '—';
+  return num.toLocaleString('zh-TW', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 3
+  });
+}
+const fmt = trim3;
+const dec = trim3;
+
+function init() {
+  DATA.forEach(d => {
+    let o = document.createElement('option');
+    o.value = d.level;
+    o.textContent = d.level;
+    $('level').appendChild(o);
+  });
+
+  $('level').value = 12;
+
+  DATA.forEach(d => {
+    $('dataTable').querySelector('tbody').insertAdjacentHTML(
+      'beforeend',
+      `<tr>
+        <td>${d.level}</td>
+        <td>${fmt(d.early)}</td>
+        <td>${fmt(d.middle)}</td>
+        <td>${fmt(d.late)}</td>
+        <td>${fmt(d.total)}</td>
+        <td>${fmt(d.post)}</td>
+      </tr>`
+    );
+  });
+
+  document.querySelectorAll('input,select').forEach(el => el.addEventListener('input', calc));
+  calc();
+}
+
+function calc() {
+  // 戰力計算
+  const p = n('power');
+  const water = p * 1.05;
+  $('water').textContent = fmt(water);
+  $('canBeat').textContent = fmt(p * 1.05 / 0.95);
+  $('beatMe').textContent = fmt(p * 0.95 / 1.05);
+  $('gap').textContent = fmt(water * 1.05 / 0.95);
+
+  // 結晶時間
+  const ct = n('crystalTotal');
+  const cs = n('crystalSpeed');
+  const mins = cs ? ct / cs / 60 : NaN;
+  $('crystalMin').textContent = dec(mins);
+  $('crystalHour').textContent = dec(mins / 60);
+
+  // 修為時間估算
+  const d = DATA.find(x => x.level == $('level').value);
+  const need = d[$('stage').value];
+  const remain = need - n('currentCult') - n('bonusCult');
+  const speed = n('cultSpeed');
+  const hours = speed ? Math.max(0, remain) / 3600 / speed : NaN;
+
+  $('stageNeed').textContent = fmt(need);
+  $('remainCult').textContent = fmt(Math.max(0, remain));
+  $('remainHours').textContent = dec(hours);
+  $('remainDays').textContent = dec(hours / 24);
+}
+
+init();
+</script>
+
+<section class="encounter-card">
+  <h2>修仙奇遇</h2>
+  <div class="encounter-table-wrap">
+    <table class="encounter-table">
+      <tbody>
+        <tr><td>向左走</td><td class="bad">扣修為</td><td>向右走</td><td class="challenge">挑戰帖</td></tr>
+<tr><td>乘船前往</td><td class="pill">聚靈丹</td><td>御劍飛行</td><td class="challenge">挑戰帖</td></tr>
+<tr><td>煉丹</td><td class="pill">聚靈丹</td><td>洗灌藥園</td><td class="gain">加修為</td></tr>
+<tr><td>前往黑水湖</td><td class="bad">扣修為</td><td>前往花蓮村</td><td class="pill">聚靈丹</td></tr>
+<tr><td>暗中調查</td><td class="challenge">挑戰帖</td><td>正面出擊</td><td class="none">無</td></tr>
+<tr><td>夜晚前行</td><td class="energy">元氣丹</td><td>白天前行</td><td class="none">無</td></tr>
+<tr><td>幫助鸞鳥</td><td class="pill">聚靈丹</td><td>幫助金鼠</td><td class="energy">元氣丹</td></tr>
+<tr><td>普通的靈石</td><td class="gain">加修為</td><td>古怪的靈石</td><td class="gain">加修為</td></tr>
+<tr><td>贈藥</td><td class="pill">聚靈丹</td><td>救治</td><td class="energy">元氣丹</td></tr>
+<tr><td>仙草</td><td class="gain">加修為</td><td>丹藥</td><td class="pill">聚靈丹</td></tr>
+<tr><td>食用果實</td><td class="gain">加修為</td><td>飲用溪水</td><td class="gain">加修為</td></tr>
+<tr><td>一同探尋</td><td class="none">無</td><td>分開探尋</td><td class="energy">元氣丹</td></tr>
+<tr><td>勇敢靠近</td><td class="gain">加修為</td><td>迅速躲避</td><td class="none">無</td></tr>
+<tr><td>上前切磋</td><td class="gain">加修為</td><td>謙虛回絕</td><td class="gain">加修為</td></tr>
+<tr><td>與其戰鬥</td><td class="pill">聚靈丹</td><td>好言相勸</td><td class="bad">扣修為</td></tr>
+<tr><td>與其戰鬥</td><td class="challenge">挑戰帖</td><td>表達敬仰</td><td class="gain">加修為</td></tr>
+<tr><td>善良</td><td class="gain">加修為</td><td>強大</td><td class="challenge">挑戰帖</td></tr>
+<tr><td>救治</td><td class="pill">聚靈丹</td><td>離去</td><td class="bad">扣修為</td></tr>
+<tr><td>過去</td><td class="pill">聚靈丹</td><td>未來</td><td class="bad">扣修為</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="encounter-note">說明：以上奇遇結果為隨機事件可能獲得的獎勵或懲罰，不同選擇將影響修仙之路的發展，請謹慎抉擇！</p>
+</section>
+
+</body>
+</html>
